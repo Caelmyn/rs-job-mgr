@@ -1,0 +1,109 @@
+name : ci-tool
+version : "0.1.0"
+author : Maxime BAILLY <maxbailly@hotmail.fr>
+about : This software allow users to interact with multiples CI Tool like Jenkins or Gitlab via command line.
+
+subcommands :
+  # Jenkins
+  - jenkins :
+      about : Jenkins API
+
+      # Jenkins Arguments
+      args :
+        - config :
+            short : c
+            long : config
+            required : true
+            takes_value : true
+            help : Sets JSON configuration file.
+
+      # Jenkins Subcommands
+      subcommands :
+        # Trigger
+        - trigger :
+            about : Trigger a new Jenkins build
+            args :
+              - wait-for-completion :
+                  short : w
+                  long : wait-for-completion
+                  help : Wait until build is finished whatever the build result. The option -d must be set.
+                  requires : delay
+              - delay :
+                  short : d
+                  long : delay
+                  takes_value : true
+                  help : Sets the delay before every request.
+              - params :
+                  short : p
+                  long : params
+                  takes_value : true
+                  multiple : true
+                  help : Send some parameters to the build. File paths must be prefixed by an '@'.
+              - params-from-json :
+                  short : j
+                  long : params-from-json
+                  takes_value : true
+                  help : JSON file.
+            groups :
+              - PARAMS :
+                  args :
+                    - params
+                    - params-from-json
+
+        # Download
+        - download :
+            about : Download from various wiorkspace location or builds.
+            args :
+              - from-build :
+                  short : b
+                  long : from-build
+                  takes_value : true
+                  requires : filter
+                  help : Download artifacts from build. Fails if build is still running. Requires -f option.
+              - filter :
+                  short : f
+                  long : filter
+                  takes_value : true
+                  help : Select the artifact to download.
+              - from-ws :
+                  short : w
+                  long : from-workspace
+                  takes_value : true
+                  # requires : as-file
+                  help : Download file or directory as a zip file from workspace. Requires -F option.
+              - as-file :
+                  short : -F
+                  long : as-file
+                  help : Tells this tools that we will download a file from the workspace and thus to not zip it.
+              - destination :
+                  short : d
+                  long : destination
+                  takes_value : true
+                  help : Sets the downloaded file's destination.
+              - alt-name :
+                  short : n
+                  long : alt-name
+                  takes_value : true
+                  help : Sets downloaded file's name.
+            groups :
+              - FROM :
+                  args :
+                    - from-build
+                    - from-ws
+                  required : true
+
+        # Cancel build
+        - cancel :
+            about : Cancel build id.
+            setting : TrailingVarArg
+            args :
+              - build-id :
+                    required : true
+
+        # Build info
+        - info :
+            about : Print build info.
+            setting : TrailingVarArg
+            args :
+              - build-id :
+                    required : true

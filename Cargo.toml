@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "ci-tool",
+    "jenkins_ci"
+]
